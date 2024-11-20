@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App de Inversión</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen {
+            flex: 1;
+            display: none;
+            flex-direction: column;
+            background: #f4f4f4;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* Perfil */
+        .profile-section {
+            text-align: center;
+            margin: 20px;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .edit-profile-btn {
+            padding: 10px 20px;
+            background: #1abc9c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .profile-stats {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .profile-stats p {
+            font-size: 16px;
+            margin: 5px 0;
+        }
+
+        .profile-settings {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .profile-settings button {
+            padding: 10px 20px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Telegram */
+        .telegram-groups,
+        .telegram-investments {
+            margin: 20px;
+        }
+
+        .telegram-groups ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .telegram-groups ul li {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .telegram-groups ul li button {
+            padding: 5px 10px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .investment-post {
+            background: #f4f4f4;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .investment-post button {
+            padding: 5px 10px;
+            background: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* General */
+        .footer-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 10%;
+            background: #2c3e50;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .footer-nav .nav-item {
+            text-align: center;
+            flex: 1;
+            color: #ecf0f1;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .footer-nav .nav-item img {
+            width: 30px;
+            height: 30px;
+            margin-bottom: 5px;
+        }
+
+        .footer-nav .nav-item.active img {
+            border: 2px solid #1abc9c;
+            border-radius: 50%;
+        }
+
+        .footer-nav .nav-item.active {
+            color: #1abc9c;
+        }
+
+        .patrimonio {
+            width: 90%;
+            height: 30%;
+            background: #e0e0e0;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 20px auto 10px;
+            position: relative;
+        }
+
+        .chart-container {
+            width: 90%;
+            margin: 0 auto 10px;
+            height: 250px;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Pantallas -->
+    <div id="screen-profile" class="screen">
+        <div class="profile-section">
+            <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" alt="Avatar" class="profile-avatar">
+            <h2 id="profile-name">Nombre del Usuario</h2>
+            <p id="profile-email">correo@ejemplo.com</p>
+            <button class="edit-profile-btn" onclick="editProfile()">Editar Perfil</button>
+        </div>
+        <div class="profile-stats">
+            <p><strong>Dinero Total Invertido:</strong> $0</p>
+            <p><strong>Ganancias Totales:</strong> $0</p>
+        </div>
+        <div class="profile-settings">
+            <button onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+    <div id="screen-telegram" class="screen">
+        <div class="telegram-groups">
+            <h3>Grupos Disponibles</h3>
+            <ul>
+                <li>
+                    <span>Inversiones Cripto</span>
+                    <button onclick="joinGroup('Inversiones Cripto')">Unirse</button>
+                </li>
+                <li>
+                    <span>Inmuebles Premium</span>
+                    <button onclick="joinGroup('Inmuebles Premium')">Unirse</button>
+                </li>
+            </ul>
+        </div>
+        <div class="telegram-investments">
+            <h3>Inversiones Conjuntas</h3>
+            <div class="investment-post">
+                <h4>Proyecto: Cripto NFT</h4>
+                <p>Dinero Requerido: $5000</p>
+                <p>Descripción: Proyecto para lanzar un marketplace de NFT en blockchain.</p>
+                <button onclick="joinInvestment('Cripto NFT')">Invertir</button>
+            </div>
+        </div>
+    </div>
+    <div id="screen-home" class="screen active">
+        <div class="patrimonio">
+            <h2>Tu Patrimonio</h2>
+            <p id="total-wealth">$0</p>
+        </div>
+        <div class="chart-container">
+            <canvas id="investment-chart"></canvas>
+        </div>
+    </div>
+    <div id="screen-ia" class="screen">
+        <div class="chat">
+            <div id="chat-window" class="chat-window"></div>
+            <div class="chat-input">
+                <input id="user-input" type="text" placeholder="Escribe tu mensaje...">
+                <button onclick="sendMessage()">Enviar</button>
+            </div>
+        </div>
+    </div>
+    <div id="screen-money" class="screen">
+        <h1>Sección de Dinero</h1>
+    </div>
+
+    <!-- Barra de navegación -->
+    <div class="footer-nav">
+        <div class="nav-item" onclick="switchScreen('screen-ia')">
+            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="IA">
+            <p>IA</p>
+        </div>
+        <div class="nav-item" onclick="switchScreen('screen-money')">
+            <img src="https://cdn-icons-png.flaticon.com/512/1828/1828817.png" alt="Dinero">
+            <p>Dinero</p>
+        </div>
+        <div class="nav-item active" onclick="switchScreen('screen-home')">
+            <img src="https://cdn-icons-png.flaticon.com/512/1946/1946436.png" alt="Inicio">
+            <p>Principal</p>
+        </div>
+        <div class="nav-item" onclick="switchScreen('screen-telegram')">
+            <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram">
+            <p>Telegram</p>
+        </div>
+        <div class="nav-item" onclick="switchScreen('screen-profile')">
+            <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" alt="Perfil">
+            <p>Perfil</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('investment-chart').getContext('2d');
+        let investmentChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
+                datasets: [{
+                    label: 'Inversiones',
+                    data: [100, 200, 300, 400, 500, 600, 700],
+                    borderColor: '#3498db',
+                    backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                    fill: true,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                    }
+                }
+            }
+        });
+
+        const switchScreen = (screenId) => {
+            document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+
+            document.querySelectorAll('.footer-nav .nav-item').forEach(item => item.classList.remove('active'));
+            document.querySelector(`.footer-nav .nav-item[onclick="switchScreen('${screenId}')"]`).classList.add('active');
+        };
+
+        const editProfile = () => alert("Funcionalidad para editar perfil próximamente.");
+        const logout = () => alert("Has cerrado sesión.");
+        const joinGroup = (groupName) => alert(`Te has unido al grupo: ${groupName}`);
+        const joinInvestment = (projectName) => alert(`Has invertido en el proyecto: ${projectName}`);
+    </script>
+</body>
+</html>
